@@ -34,6 +34,33 @@ input,textarea{
   outline: none;
 } */
 
+/* Dropdown styling */
+select {
+    width: 100%;
+    padding: 9px 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    background-color: #fff9fc;
+    color: #333;
+
+    font-size: 15px;
+    cursor: pointer;
+
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+select:hover {
+    border-color: #f3a6c5;
+}
+
+select:focus {
+    border-color: rgb(236, 72, 153);
+    box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.12);
+}
+
 button{
     width:100%;
     padding:12px;

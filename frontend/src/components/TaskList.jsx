@@ -1,18 +1,18 @@
 import { useState, useEffect, Fragment } from "react";
 import "../style/tasklist.css";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 function TaskList() {
   const [taskData, setTaskData] = useState();
-  const [selectedTask,setSelectedTask]=useState([]);  //collection of ids of selected tasks
+  const [selectedTask, setSelectedTask] = useState([]); //collection of ids of selected tasks
 
   useEffect(() => {
     getListData();
   }, []);
 
   async function getListData() {
-    let list = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/`,{
-      credentials:"include"
+    let list = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/`, {
+      credentials: "include",
     });
     list = await list.json();
     console.log(list);
@@ -21,91 +21,151 @@ function TaskList() {
 
   async function deleteTask(id) {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/${id}`, {
-        method: "DELETE",
-        credentials:"include",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/tasks/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
       console.log(response);
-      const data=await response.json();
-      if(data.success){
-      getListData();
-      }else{
+      const data = await response.json();
+      if (data.success) {
+        getListData();
+      } else {
         alert("an error occured!");
       }
     } catch (err) {
       console.log(err);
     }
   }
-  function selectAll(event){
-    console.log(event.target.checked);
-    if(event.target.checked){
-      let items=taskData.map((item)=>item._id);
-      setSelectedTask(items);
-    }else{
-      setSelectedTask([]);
-    }
-  }
-  function selectSingleTask(id){
-    if(selectedTask.includes(id)){
-      let items=selectedTask.filter(item=>item!=id);
-      setSelectedTask(items);
-    }else{
-      setSelectedTask([id,...selectedTask]);
-    }
-  }
-  console.log(selectedTask);
-async function deleteMany(){
-
-    try{
-
+  async function updateStatus(id, newStatus) {
+    try {
         const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/tasks/deleteMany`,
-           
+            `${import.meta.env.VITE_API_URL}/api/tasks/${id}`,
             {
-                method:"DELETE",
-                credentials:"include",
-                headers:{
-                    "Content-Type":"application/json"
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-                body:JSON.stringify({
-                    ids:selectedTask
-                })
+                body: JSON.stringify({
+                    status: newStatus,
+                }),
             }
         );
 
         const data = await response.json();
 
-        console.log(data);
-
-        setSelectedTask([]);
-        if(data.success){
-        getListData();}
-        else{
-          alert("an unknown error occurred!");
+        if (data.success) {
+            getListData();
+        } else {
+            alert("Failed to update status");
         }
-
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 }
+  function selectAll(event) {
+    console.log(event.target.checked);
+    if (event.target.checked) {
+      let items = taskData.map((item) => item._id);
+      setSelectedTask(items);
+    } else {
+      setSelectedTask([]);
+    }
+  }
+  function selectSingleTask(id) {
+    if (selectedTask.includes(id)) {
+      let items = selectedTask.filter((item) => item != id);
+      setSelectedTask(items);
+    } else {
+      setSelectedTask([id, ...selectedTask]);
+    }
+  }
+  console.log(selectedTask);
+  async function deleteMany() {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/tasks/deleteMany`,
+
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ids: selectedTask,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+
+      setSelectedTask([]);
+      if (data.success) {
+        getListData();
+      } else {
+        alert("an unknown error occurred!");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return (
     <div>
       <h1>To Do List</h1>
-      <button className="delete-item delete-multiple" onClick={deleteMany}>Delete</button>
+      <button className="delete-item delete-multiple" onClick={deleteMany}>
+        Delete
+      </button>
       <ul className="task-list">
-        <li className="list-header"><input type="checkbox"
-        onChange={selectAll}/></li>
+        <li className="list-header">
+          <input type="checkbox" onChange={selectAll} />
+        </li>
         <li className="list-header">S.No</li>
         <li className="list-header">Title</li>
         <li className="list-header">Description</li>
+        <li className="list-header">Priority</li>
+        <li className="list-header">Status</li>
+        <li className="list-header">Due Date</li>
         <li className="list-header">Action</li>
         {taskData &&
           taskData.map((item, index) => (
             <Fragment key={item._id}>
-              <li className="list-item"><input onChange={()=>selectSingleTask(item._id)} checked={selectedTask.includes(item._id)} type="checkbox"/></li>
+              <li className="list-item">
+                <input
+                  onChange={() => selectSingleTask(item._id)}
+                  checked={selectedTask.includes(item._id)}
+                  type="checkbox"
+                />
+              </li>
               <li className="list-item">{index + 1}</li>
               <li className="list-item">{item.title}</li>
+
               <li className="list-item">{item.description}</li>
+
+              <li className="list-item">{item.priority}</li>
+
+              <li className="list-item">
+                <select
+                  value={item.status}
+                  onChange={(e) => updateStatus(item._id, e.target.value)}
+                >
+                  <option value="To Do">To Do</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </li>
+
+              <li className="list-item">
+                {item.dueDate
+                  ? new Date(item.dueDate).toLocaleDateString()
+                  : "No due date"}
+              </li>
+
               <li className="list-item">
                 <button
                   className="delete-item"
@@ -113,7 +173,9 @@ async function deleteMany(){
                 >
                   Delete
                 </button>
-                <Link to={"/update/"+item._id} className="update-item">Update</Link>
+                <Link to={"/update/" + item._id} className="update-item">
+                  Update
+                </Link>
               </li>
             </Fragment>
           ))}
