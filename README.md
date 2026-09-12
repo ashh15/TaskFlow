@@ -1,6 +1,6 @@
-# MERN Todo App
+# MERN TaskFlow
 
-A full-stack Todo application built with React, Node.js, Express, and MongoDB.
+A full-stack Task Tracking application built with React, Node.js, Express, and MongoDB.
 
 ## Features
 
@@ -11,6 +11,9 @@ A full-stack Todo application built with React, Node.js, Express, and MongoDB.
 - Delete Tasks
 - Delete Multiple Tasks
 - User-specific Tasks
+- Priority levels
+- Status tracking
+- Due dates
 - Protected Routes
 
 ## Tech Stack
