@@ -9,7 +9,7 @@ function AddTask(){
     const handleSubmit = async(e) => {
     e.preventDefault();
    const response=await fetch(
-    "http://localhost:4000/api/tasks/add",
+     `${import.meta.env.VITE_API_URL}/api/tasks/add`,
     {
     method:"POST",
     credentials:"include",

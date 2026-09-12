@@ -11,7 +11,7 @@ function TaskList() {
   }, []);
 
   async function getListData() {
-    let list = await fetch("http://localhost:4000/api/tasks/",{
+    let list = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/`,{
       credentials:"include"
     });
     list = await list.json();
@@ -21,7 +21,7 @@ function TaskList() {
 
   async function deleteTask(id) {
     try {
-      const response = await fetch(`http://localhost:4000/api/tasks/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/${id}`, {
         method: "DELETE",
         credentials:"include",
       });
@@ -59,7 +59,7 @@ async function deleteMany(){
     try{
 
         const response = await fetch(
-            "http://localhost:4000/api/tasks/deleteMany",
+            `${import.meta.env.VITE_API_URL}/api/tasks/deleteMany`,
            
             {
                 method:"DELETE",

@@ -14,7 +14,7 @@ function NavBar() {
   async function checkAuth() {
     try {
       const response = await fetch(
-        "http://localhost:4000/api/user/check-auth",
+        `${import.meta.env.VITE_API_URL}/api/user/check-auth`,
         {
           credentials: "include",
         }
@@ -35,7 +35,7 @@ function NavBar() {
   async function logout() {
     try {
       const response = await fetch(
-        "http://localhost:4000/api/user/logout",
+        `${import.meta.env.VITE_API_URL}/api/user/logout`,
         {
           method: "POST",
           credentials: "include",

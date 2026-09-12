@@ -13,7 +13,7 @@ function UpdateTask(){
     getTask();
     },[]);
     async function getTask(){
-    const response=await fetch(`http://localhost:4000/api/tasks/${id}`,{
+    const response=await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/${id}`,{
         credentials:"include",
     })
     const data=await response.json();
@@ -23,7 +23,7 @@ function UpdateTask(){
     async function handleSubmit(event){
          event.preventDefault();
         try{
-        const response=await fetch(`http://localhost:4000/api/tasks/${id}`,{
+        const response=await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/${id}`,{
             method:"PUT",
             credentials: "include",
             headers:{
