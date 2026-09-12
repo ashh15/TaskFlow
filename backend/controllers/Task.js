@@ -6,6 +6,9 @@ async function handleCreateNewTask(req, res) {
       title: req.body.title,
       description: req.body.description,
       userId: req.user.userId,
+      status: req.body.status,
+      dueDate: req.body.dueDate,
+      userId: req.user.userId,
     });
     res.status(201).json({
       success: true,
@@ -31,7 +34,10 @@ async function handleGetAllTasks(req, res) {
 async function handleDeleteTask(req, res) {
   try {
     const id = req.params.id;
-    const user = await Task.findOneAndDelete({ _id: id, userId: req.user.userId });
+    const user = await Task.findOneAndDelete({
+      _id: id,
+      userId: req.user.userId,
+    });
     res.status(200).json({
       success: true,
       deletedUser: user,
@@ -46,31 +52,61 @@ async function handleDeleteTask(req, res) {
 }
 
 async function handleUpdateTask(req, res) {
+
   try {
+
     const id = req.params.id;
+
+    const updateData = {};
+
+    if (req.body.title !== undefined) {
+      updateData.title = req.body.title;
+    }
+
+    if (req.body.description !== undefined) {
+      updateData.description = req.body.description;
+    }
+
+    if (req.body.priority !== undefined) {
+      updateData.priority = req.body.priority;
+    }
+
+    if (req.body.status !== undefined) {
+      updateData.status = req.body.status;
+    }
+
+    if (req.body.dueDate !== undefined) {
+      updateData.dueDate = req.body.dueDate;
+    }
+
     const updatedTask = await Task.findOneAndUpdate(
-      { _id: id, userId: req.user.userId },
       {
-        title: req.body.title,
-        description: req.body.description,
+        _id: id,
+        userId: req.user.userId
       },
-      { returnDocument: "after" },
+      updateData,
+      {
+        returnDocument: "after"
+      }
     );
+
     res.status(200).json({
       success: true,
       updatedTask,
     });
+
   } catch (err) {
+
     console.log(err);
+
   }
+
 }
 
 async function handleGetTaskById(req, res) {
   try {
-    const id=req.params.id;
-    const task = await Task.findOne({_id: id,
-    userId: req.user.userId,}
-);
+    const id = req.params.id;
+    const task = await Task.findOne({ _id: id, userId: req.user.userId });
     res.status(200).json(task);
   } catch (err) {
     res.status(500).json({
@@ -85,7 +121,7 @@ async function handleDeleteManyTasks(req, res) {
       _id: {
         $in: ids,
       },
-       userId: req.user.userId,
+      userId: req.user.userId,
     });
     res.status(200).json({
       success: true,
